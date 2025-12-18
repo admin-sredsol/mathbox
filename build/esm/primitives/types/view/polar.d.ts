@@ -1,0 +1,20 @@
+export class Polar extends View {
+    make(): number;
+    uniforms: {
+        polarBend: any;
+        polarHelix: any;
+        polarFocus: any;
+        polarAspect: any;
+        viewMatrix: any;
+    } | undefined;
+    viewMatrix: any;
+    composer: ((position: any, rotation: any, quaternion: any, scale: any, matrix: any, eulerOrder: any) => import("three").Matrix4) | undefined;
+    aspect: number | undefined;
+    unmake(): boolean;
+    helix: any;
+    bend: any;
+    focus: number | undefined;
+    axis(dimension: any): Vector2;
+}
+import { View } from "./view.js";
+import { Vector2 } from "three";

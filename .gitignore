@@ -3,7 +3,7 @@
 .DS_Store
 .tmp/*
 decaffeinate*
-build/
+# build/
 build_testing/
 build_docs/
 # for now out least
