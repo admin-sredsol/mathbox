@@ -1,0 +1,11 @@
+*** Begin Patch
+*** Update File: package.json
+@@
+-    "test": "export CHROME_BIN=$(node -e \"console.log(require('puppeteer').executablePath())\") && webpack --config config/webpack.config.testing.js && karma start --single-run",
+-    "test:watch": "concurrently 'webpack --watch --config config/webpack.config.testing.js' 'karma start'",
+-    "postinstall": "node scripts/patch-threestrap.js",
+-    "prepack": "npm run build"
++    "test": "export CHROME_BIN=$(node -e \"console.log(require('puppeteer').executablePath())\") && webpack --config config/webpack.config.testing.js && karma start --single-run",
++    "test:watch": "concurrently 'webpack --watch --config config/webpack.config.testing.js' 'karma start'",
++    "postinstall": "node scripts/patch-threestrap.js"
+*** End Patch
