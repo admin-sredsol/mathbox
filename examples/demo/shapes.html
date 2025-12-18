@@ -1,47 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>MathBox - Shapes</title>
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/three@0.137.0/build/three.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/three@0.137.0/examples/js/controls/OrbitControls.js"
-    ></script>
+    <title>MathBox - Shapes (ESM)</title>
+
     <!--
-      - a minified version mathbox.min.js is also available;
-      - recommend using a specific version (not @latest) in public sites
+      Import map: map bare specifiers used by MathBox and examples to ESM bundles.
+      - "three" resolves to the CDN-provided ESM bundle (r0.182.0).
+      - "threestrap" resolves to the local installed ESM bundle (if served from the repository).
+      - "mathbox" resolves to this project's ESM build.
+      Adjust the threestrap mapping if you serve threestrap from a different location.
     -->
-    <script type="text/javascript" src="/build/bundle/mathbox.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js",
+          "three/": "https://cdn.jsdelivr.net/npm/three@0.182.0/",
+          "mathbox": "/build/esm/mathbox.bundle.js"
+        }
+      }
+    </script>
+
     <link rel="stylesheet" href="/build/mathbox.css" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1" />
+
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        background: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+      }
+      /* Demo canvas fills the page */
+      #demo {
+        position: absolute;
+        inset: 0;
+      }
+      /* Small hint in top-left */
+      .hint {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        color: #111;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        z-index: 1000;
+      }
+    </style>
   </head>
+
   <body>
-    <script>
-      mathbox = MathBox.mathBox({
-        plugins: ["core", "controls", "cursor"],
-        controls: {
-          klass: THREE.OrbitControls,
-          parameters: {
-            enableZoom: false,
+    <div id="demo" role="main" aria-label="MathBox demo"></div>
+    <div class="hint">MathBox demo — three@0.182.0 (ESM)</div>
+
+    <script type="module">
+      // ESM entry: import three, OrbitControls, and the ESM MathBox build.
+      // The importmap above resolves bare specifiers to the correct module files.
+      import * as THREE from "three";
+      import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+      import { mathBox } from "mathbox";
+
+      // Expose things for easier debugging from the console.
+      window.THREE = THREE;
+      window.OrbitControls = OrbitControls;
+
+      // Create a MathBox instance using the ESM API.
+      // Pass the DOM element so MathBox attaches the renderer there.
+      const container = document.getElementById("demo");
+
+      let mathbox;
+      try {
+        mathbox = mathBox({
+          plugins: ["core", "controls", "cursor"],
+          element: container,
+          controls: {
+            // With ESM we can directly pass the OrbitControls class
+            klass: OrbitControls,
+            parameters: {
+              enableZoom: false,
+            },
           },
-        },
-        camera: {
-          fov: 20,
-        },
-        loop: {
-          start: window == window.top,
-        },
-      });
-      three = mathbox.three;
+          camera: {
+            fov: 20,
+          },
+          loop: {
+            // only start loop when top-level window
+            start: window === window.top,
+          },
+        });
+      } catch (err) {
+        console.error("Failed to initialize MathBox (ESM):", err);
+        throw err;
+      }
 
+      // Expose for debugging
+      window.mathbox = mathbox;
+
+      const three = mathbox.three;
+
+      // Position camera & background
       three.camera.position.set(2, 2, 4);
-      three.renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
+      if (
+        three.renderer &&
+        typeof three.renderer.setClearColor === "function"
+      ) {
+        three.renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
+      }
 
-      view = mathbox.set({ scale: 500, focus: 5 }).cartesian({
+      // Create a cartesian view like the original demo
+      const view = mathbox.set({ scale: 500, focus: 5 }).cartesian({
         range: [
           [-2, 2],
           [-1, 1],
@@ -50,17 +121,16 @@
         scale: [3.5, 1, 1],
       });
 
+      // Sample voxel data (same as original demo)
       view.voxel({
         data: [
           -1, -1, -0.5, -0.75, -0.75, -1.2, -0.4, -0.6, -1.5, 0, 0, 0, -1, 1,
           -0.5, -0.75, 0.75, -1.2, -0.4, 0.6, -1.5, 0, 0, 0, 1, 1, -0.5, 0.75,
           0.75, -1.2, 0.4, 0.6, -1.5, 0, 0, 0, 1, -1, -0.5, 0.75, -0.75, -1.2,
-          0.4, -0.6, -1.5, 0, 0, 0,
-
-          -1, -1, 0.5, -0.75, -0.75, 1.2, -0.4, -0.6, 1.5, 0, 0, 0, -1, 1, 0.5,
-          -0.75, 0.75, 1.2, -0.4, 0.6, 1.5, 0, 0, 0, 1, 1, 0.5, 0.75, 0.75, 1.2,
-          0.4, 0.6, 1.5, 0, 0, 0, 1, -1, 0.5, 0.75, -0.75, 1.2, 0.4, -0.6, 1.5,
-          0, 0, 0,
+          0.4, -0.6, -1.5, 0, 0, 0, -1, -1, 0.5, -0.75, -0.75, 1.2, -0.4, -0.6,
+          1.5, 0, 0, 0, -1, 1, 0.5, -0.75, 0.75, 1.2, -0.4, 0.6, 1.5, 0, 0, 0,
+          1, 1, 0.5, 0.75, 0.75, 1.2, 0.4, 0.6, 1.5, 0, 0, 0, 1, -1, 0.5, 0.75,
+          -0.75, 1.2, 0.4, -0.6, 1.5, 0, 0, 0,
         ],
         width: 4,
         height: 2,
@@ -69,167 +139,69 @@
         channels: 3,
       });
 
-      view
-        .transform({
+      // Helper to add labeled primitives similar to the original demo layout
+      function addLabeledExample(position, setupFn, labelText) {
+        const t = view.transform({
           pass: "eye",
-          position: [-0.8, 0.4, -4],
+          position: position,
           scale: [1 / 6, 1 / 6, 1 / 6],
-        })
-        .point({
-          color: 0x3090ff,
-          size: 3,
-        })
-        .array({
-          data: [0, 0, 0],
-          channels: 3,
-        })
-        .text({
-          data: ["Point"],
-        })
-        .label({
-          offset: [0, -140],
-          zIndex: 1,
-          color: "black",
         });
 
-      view
-        .transform({
-          pass: "eye",
-          position: [0, 0.4, -4],
-          scale: [1 / 6, 1 / 6, 1 / 6],
-        })
-        .line({
-          color: 0x3090ff,
-          size: 3,
-        })
-        .array({
-          data: [0, 0, 0],
-          channels: 3,
-        })
-        .text({
-          data: ["Line"],
-        })
-        .label({
-          offset: [0, -140],
-          zIndex: 1,
-          color: "black",
-        });
+        setupFn(t);
+        t.array({ data: [0, 0, 0], channels: 3 })
+          .text({ data: [labelText] })
+          .label({ offset: [0, -140], zIndex: 1, color: "black" });
+      }
 
-      view
-        .transform({
-          pass: "eye",
-          position: [0.8, 0.4, -4],
-          scale: [1 / 6, 1 / 6, 1 / 6],
-        })
-        .surface({
-          color: 0x3090ff,
-          shaded: true,
-          width: 3,
-        })
-        .surface({
-          color: 0x3090ff,
-          fill: false,
-          lineX: true,
-          lineY: true,
-          width: 3,
-        })
-        .array({
-          data: [0, 0, 0],
-          channels: 3,
-        })
-        .text({
-          data: ["Surface"],
-        })
-        .label({
-          offset: [0, -140],
-          zIndex: 1,
-          color: "black",
-        });
+      addLabeledExample(
+        [-0.8, 0.4, -4],
+        (t) => t.point({ color: 0x3090ff, size: 3 }),
+        "Point"
+      );
+      addLabeledExample(
+        [0, 0.4, -4],
+        (t) => t.line({ color: 0x3090ff, size: 3 }),
+        "Line"
+      );
+      addLabeledExample(
+        [0.8, 0.4, -4],
+        (t) => {
+          t.surface({ color: 0x3090ff, shaded: true, width: 3 });
+          t.surface({
+            color: 0x3090ff,
+            fill: false,
+            lineX: true,
+            lineY: true,
+            width: 3,
+          });
+        },
+        "Surface"
+      );
+      addLabeledExample(
+        [-0.8, -0.4, -4],
+        (t) => t.vector({ color: 0x3090ff, width: 3, start: true }),
+        "Vector"
+      );
+      addLabeledExample(
+        [0, -0.4, -4],
+        (t) => {
+          t.strip({ color: 0x0090ff, width: 3, shaded: true });
+          t.strip({ color: 0x3090ff, width: 3, fill: false, line: true });
+        },
+        "Strip"
+      );
+      addLabeledExample(
+        [0.8, -0.4, -4],
+        (t) => {
+          t.face({ color: 0x3090ff, width: 3, line: false, shaded: true });
+          t.face({ color: 0x3090ff, width: 3, fill: false, line: true });
+        },
+        "Face"
+      );
 
-      view
-        .transform({
-          pass: "eye",
-          position: [-0.8, -0.4, -4],
-          scale: [1 / 6, 1 / 6, 1 / 6],
-        })
-        .vector({
-          color: 0x3090ff,
-          width: 3,
-          start: true,
-        })
-        .array({
-          data: [0, 0, 0],
-          channels: 3,
-        })
-        .text({
-          data: ["Vector"],
-        })
-        .label({
-          offset: [0, -140],
-          zIndex: 1,
-          color: "black",
-        });
-
-      view
-        .transform({
-          pass: "eye",
-          position: [0, -0.4, -4],
-          scale: [1 / 6, 1 / 6, 1 / 6],
-        })
-        .strip({
-          color: 0x0090ff,
-          width: 3,
-          shaded: true,
-        })
-        .strip({
-          color: 0x3090ff,
-          width: 3,
-          fill: false,
-          line: true,
-        })
-        .array({
-          data: [0, 0, 0],
-          channels: 3,
-        })
-        .text({
-          data: ["Strip"],
-        })
-        .label({
-          offset: [0, -140],
-          zIndex: 1,
-          color: "black",
-        });
-
-      view
-        .transform({
-          pass: "eye",
-          position: [0.8, -0.4, -4],
-          scale: [1 / 6, 1 / 6, 1 / 6],
-        })
-        .face({
-          color: 0x3090ff,
-          width: 3,
-          line: false,
-          shaded: true,
-        })
-        .face({
-          color: 0x3090ff,
-          width: 3,
-          fill: false,
-          line: true,
-        })
-        .array({
-          data: [0, 0, 0],
-          channels: 3,
-        })
-        .text({
-          data: ["Face"],
-        })
-        .label({
-          offset: [0, -140],
-          zIndex: 1,
-          color: "black",
-        });
+      // Expose to console for debugging convenience
+      window.mathbox = mathbox;
+      window.view = view;
     </script>
   </body>
 </html>

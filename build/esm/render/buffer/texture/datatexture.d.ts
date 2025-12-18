@@ -9,12 +9,12 @@ export class DataTexture {
     minFilter: any;
     magFilter: any;
     type: any;
-    ctor: Float32ArrayConstructor | Uint8ArrayConstructor | Int8ArrayConstructor | Int16ArrayConstructor | Uint16ArrayConstructor | Int32ArrayConstructor | Uint32ArrayConstructor | undefined;
+    ctor: Uint8ArrayConstructor | Int8ArrayConstructor | Int16ArrayConstructor | Uint16ArrayConstructor | Int32ArrayConstructor | Uint32ArrayConstructor | Float32ArrayConstructor | undefined;
     build(options: any): void;
     texture: any;
     format: any;
-    format3: 1028 | 1030 | 1022 | 1023 | null | undefined;
-    data: Float32Array | Uint32Array | Uint8Array | Int8Array | Int16Array | Uint16Array | Int32Array | undefined;
+    format3: 1023 | 1028 | 1030 | 1022 | null | undefined;
+    data: Float32Array | Uint8Array | Int8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | undefined;
     textureObject: CONST.Texture<HTMLImageElement> | null | undefined;
     textureProperties: any;
     uniforms: {
