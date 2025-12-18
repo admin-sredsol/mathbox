@@ -5,6 +5,15 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = {
   resolve: {
     extensions: [".ts", ".js"],
+    alias: {
+      // Force imports of "threestrap" to resolve to the built ESM bundle inside
+      // the dependency. This avoids package.json conditional `exports` parsing
+      // issues in some resolver environments/bundlers.
+      threestrap: path.resolve(
+        __dirname,
+        "../node_modules/threestrap/build/threestrap.module.js"
+      ),
+    },
   },
   plugins: [
     new webpack.ProvidePlugin({
