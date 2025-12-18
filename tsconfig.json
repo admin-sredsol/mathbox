@@ -2,14 +2,19 @@
   "compilerOptions": {
     "outDir": "./build/esm/",
     "noImplicitAny": true,
-    "module": "es6",
-    "target": "es6",
+    "module": "ES2020",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
     "allowJs": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
     "baseUrl": "./",
     "declaration": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "types": ["node", "jasmine"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

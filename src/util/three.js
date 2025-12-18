@@ -74,11 +74,13 @@ export const paramToGL = function (gl, p) {
   if (p === CONST.RGBAFormat) {
     return gl.RGBA;
   }
-  if (p === CONST.LuminanceFormat) {
-    return gl.LUMINANCE;
+  // Luminance/LuminanceAlpha were removed in newer three.js versions.
+  // Map them to Red/RG formats which are the modern equivalents for 1- and 2-channel data.
+  if (p === CONST.RedFormat) {
+    return gl.RED;
   }
-  if (p === CONST.LuminanceAlphaFormat) {
-    return gl.LUMINANCE_ALPHA;
+  if (p === CONST.RGFormat) {
+    return gl.RG;
   }
 
   if (p === CONST.AddEquation) {

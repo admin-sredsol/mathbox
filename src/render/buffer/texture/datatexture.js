@@ -65,8 +65,8 @@ export class DataTexture {
     ];
     this.format3 = [
       null,
-      CONST.LuminanceFormat,
-      CONST.LuminanceAlphaFormat,
+      CONST.RedFormat,
+      CONST.RGFormat,
       CONST.RGBFormat,
       CONST.RGBAFormat,
     ][this.channels];

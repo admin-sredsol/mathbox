@@ -14,13 +14,10 @@ import { BufferGeometry } from "three";
 export class Geometry extends BufferGeometry {
   constructor() {
     super();
-    new BufferGeometry(this);
     if (this.uniforms == null) {
       this.uniforms = {};
     }
-    if (this.groups == null) {
-      this.groups = [];
-    }
+    // No need to manually set this.groups; use addGroup/clearGroups if needed
   }
 
   _reduce(dims, maxs) {
@@ -73,6 +70,9 @@ export class Geometry extends BufferGeometry {
   }
 
   _offsets(offsets) {
-    this.groups = offsets;
+    this.clearGroups();
+    for (const group of offsets) {
+      this.addGroup(group.start, group.count, group.materialIndex || 0);
+    }
   }
 }

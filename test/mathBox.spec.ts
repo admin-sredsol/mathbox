@@ -1,5 +1,5 @@
 import * as MathBox from "../src";
-import * as packageJson from "../package.json";
+import packageJson from "../package.json";
 import { smallPause } from "./test_utils";
 
 describe("MathBox.version", () => {

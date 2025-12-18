@@ -285,14 +285,17 @@ export class Surface extends Primitive {
       this.wireZBias.value = zBias + (fill ? lineBias : 0);
       this.wireColor.copy(color);
       if (fill) {
-        const c = this.wireScratch;
-        c.setRGB(color.r, color.g, color.b);
-        this._convertLinearToGamma(
-          this._convertGammaToLinear(c).multiplyScalar(0.75)
-        );
-        this.wireColor.r = c.r;
-        this.wireColor.g = c.g;
-        this.wireColor.b = c.b;
+        // Compute a darkened wire color deterministically without mutating shared objects.
+        // Use a temporary Color so conversions (which mutate their argument) do not
+        // alter `color` or `this.wireScratch` in place.
+        const temp = new Color(color.r, color.g, color.b);
+        // Convert gamma -> linear, darken in linear space, convert back.
+        this._convertGammaToLinear(temp);
+        temp.multiplyScalar(0.75);
+        this._convertLinearToGamma(temp);
+        this.wireColor.r = temp.r;
+        this.wireColor.g = temp.g;
+        this.wireColor.b = temp.b;
       }
     }
 

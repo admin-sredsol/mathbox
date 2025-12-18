@@ -10,7 +10,7 @@
 
 // Threestrap plugin
 
-import { Bootstrap } from "threestrap/src/bootstrap.js";
+import { Bootstrap } from "threestrap";
 
 Bootstrap.registerPlugin("splash", {
   defaults: {
